@@ -1,17 +1,17 @@
 ---
-layout: post
 title: "my manuscript page"
 author: "Ben Gerber"
 date: "11/5/2019"
-output: html_document:
-  theme: cosmo
+output: 
+  html_document:
+    theme: yeti
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Analysis plan
+### Analysis plan
 
 - [Data Cleaning](data-cleaning.html)
 - Data Interpolation and Gap filling

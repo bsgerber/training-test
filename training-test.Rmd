@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This is a Markdown that will end up on Github.
+This is a Markdown that will end up on Github. Jillian added this line of text. 
 
 ## Header 2
 

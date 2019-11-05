@@ -1,0 +1,18 @@
+---
+title: "Test Markdown"
+author: "Ben Gerber"
+date: "11/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is a Markdown that will end up on Github.
+
+## Header 2
+
+This is more information that will be included in the RMarkdown document.

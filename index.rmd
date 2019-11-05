@@ -1,4 +1,5 @@
 ---
+layout: post
 title: "my manuscript page"
 author: "Ben Gerber"
 date: "11/5/2019"

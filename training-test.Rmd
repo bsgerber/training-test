@@ -16,3 +16,5 @@ This is a Markdown that will end up on Github.
 ## Header 2
 
 This is more information that will be included in the RMarkdown document.
+
+An edit was made by Ben after lunch at 1:40 PM.

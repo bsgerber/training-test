@@ -3,7 +3,8 @@ layout: post
 title: "my manuscript page"
 author: "Ben Gerber"
 date: "11/5/2019"
-output: html_document
+output: html_document:
+  theme: cosmo
 ---
 
 ```{r setup, include=FALSE}

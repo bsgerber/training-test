@@ -11,4 +11,4 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data Cleaning
 
-This is a new method to clean data. Jillian added the new method below. 
+### This is a new method to clean data. Jillian added the new method below. 

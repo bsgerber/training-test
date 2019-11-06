@@ -59,12 +59,110 @@ catch_original[i, ]
 ```{r}
 catch_long <- catch_clean %>%
   pivot_longer(cols = -c(Region, Year), names_to = "Species", values_to = "Count")
-catch_long
+head(catch_long)
 ```
 
+```{r}
+catch_wide <- catch_long %>%
+  pivot_wider(names_from = Year, values_from = Count)
+head(catch_wide)
+```
+
+`rename` count column to `catch_thousands`
+
+```{r}
+catch_long <- catch_long %>% 
+  rename(catch_thousands = Count)
+
+head(catch_long)
+```
+
+```{r}
+catch_long <- catch_long %>%
+  mutate(catch = catch_thousands * 1000) %>%
+  select(-catch_thousands)
+
+head(catch_long)
+```
 
 # Summarize our data
 
+```{r}
+mean_region <- catch_long %>%
+  group_by(Region, Species) %>%
+  summarize(catch_mean = mean(catch),
+            num_obs = n())
+
+mean_region
+```
+
+Calculate total catch per species
+
+```{r}
+total_catch <- catch_long %>%
+  group_by(Species) %>%
+  summarise(sum = sum(catch)) %>%
+  arrange(desc(sum))
+
+total_catch
+```
+
+```{r}
+total_species_pre_1900 <- catch_long %>%
+  filter(Year < 1900) %>%
+  group_by(Species) %>%
+  summarise(total = sum(catch)) %>%
+  arrange(desc(total))
+
+total_species_pre_1900
+```
+
 # Join to Region Table
+
+Read in data table
+
+```{r}
+region_defs <- read.csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1",stringsAsFactors = FALSE) %>% 
+    select(code, mgmtArea) %>%
+    rename (Region = code)
+
+head(region_defs)
+```
+
+```{r}
+#catch_joined <- left_join(catch_long, region_defs, by = c("Region" = "code"))
+catch_joined <- left_join(catch_long, region_defs, by = "Region")
+head(catch_joined)
+```
+
+# Separate and Unite
+
+```{r}
+site_codes <- data.frame(site = c("HAB-100",
+                                  "HAW-101",
+                                  "OAH-102",
+                                  "OAH-103",
+                                  "MAI-100"),
+                         stringsAsFactors = FALSE)
+```
+
+Separate island and site number using `separate`
+
+```{r}
+site_codes_split <- site_codes %>%
+  separate(site, into = c("island", "site_number"), sep = '-', remove = FALSE)
+
+head(site_codes_split)
+```
+
+Unite back again
+
+```{r}
+united <- site_codes_split %>%
+  unite(site_code, island, site_number, sep = '_')
+
+head(united)
+```
+
 
 ### End

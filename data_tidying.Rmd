@@ -1,0 +1,70 @@
+---
+title: "data_tidying"
+author: "Ben Gerber"
+date: "11/6/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, message=FALSE}
+library(dplyr)
+library(tidyr)
+```
+
+# Read and clean data
+
+```{r}
+catch_original <- read.csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", stringsAsFactors = FALSE)
+head(catch_original)
+```
+
+Remove `all` column and `notes` column because we don't need them.
+
+```{r}
+catch_data <- catch_original %>% 
+  select(-c(All, notesRegCode))
+```
+
+```{r}
+summary(catch_data)
+#table(catch_data$Chinook)
+```
+
+## Fix Chinook Column
+
+Use `mutate` to fix Chinook Column
+
+```{r}
+catch_clean <- catch_data %>% 
+  mutate(Chinook = ifelse(Chinook == "I", 1, Chinook)) %>%
+  mutate(Chinook  = as.numeric(Chinook))
+```
+
+Find rows that got turned into NA
+
+```{r}
+i <- which(is.na(catch_clean$Chinook))
+i
+```
+
+```{r}
+catch_original[i, ]
+```
+
+# Reshape our data
+
+```{r}
+catch_long <- catch_clean %>%
+  pivot_longer(cols = -c(Region, Year), names_to = "Species", values_to = "Count")
+catch_long
+```
+
+
+# Summarize our data
+
+# Join to Region Table
+
+### End

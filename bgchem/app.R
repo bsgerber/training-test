@@ -25,7 +25,9 @@ ui <- fluidPage(
                         ),
             selectInput("myvar",
                         "Variable:",
-                        choices = names(bg_chem))
+                        choices = c("Depth" = "CTD_Depth",
+                                    "Salinity" = "CTD_Salinity",
+                                    "Temperature" = "CTD_Temperature"))
         ),
 
         # Show a plot of the generated distribution

@@ -1,0 +1,141 @@
+---
+title: "Data Visualization"
+author: "Ben Gerber"
+date: "11/7/2019"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries
+
+```{r}
+library(leaflet)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(DT)
+library(scales) # install.packages("scales")
+```
+
+# Prepare data
+```{r}
+data_url <- "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Af119a05b-bbe7-4aea-93c6-85434dcb1c5e"
+
+esc <- tryCatch(
+    read.csv("data/escapement.csv", stringsAsFactors = FALSE),
+    error=function(cond) {
+        message(paste("Escapement file does not seem to exist, so get it from the KNB."))
+        esc <- read.csv(url(data_url, method = "libcurl"), stringsAsFactors = FALSE)
+        write.csv(esc, 'data/escapement.csv', row.names = FALSE)
+        return(esc)
+    }
+)
+
+head(esc)
+```
+
+Annual escapement by species, region, and year
+  * only for Sockeye, Chinook, Coho, Pink, Chum
+```{r}
+esc_sub <- esc %>%
+  filter(Species %in% c("Sockeye", "Chinook", "Coho", "Pink", "Chum")) %>%
+  separate(sampleDate, into = c("Year", "Month", "Day"), sep = "-", remove = TRUE) %>%
+  mutate(Year = as.numeric(Year)) %>%
+  group_by(Species, SASAP.Region, Year) %>%
+  summarise(total = sum(DailyCount),
+            n = n())
+
+esc_sub
+```
+  
+
+# Create static plots
+
+```{r}
+ggplot(esc_sub, mapping = aes(x = Species, y = total)) +
+  geom_col(fill = "blue")
+```
+
+```{r}
+ggplot(esc_sub, mapping = aes(x = Species, y = total, fill = SASAP.Region)) +
+  geom_col()
+```
+
+```{r}
+kodiak_esc <- esc_sub %>%
+  filter(SASAP.Region == "Kodiak")
+
+my_theme <- theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "bottom")
+
+pal <- c("red", "green", "orange", "black", "blue")
+
+ggplot(kodiak_esc, mapping = aes(x = Year, y = total, color = Species)) +
+  geom_line() +
+  geom_point() +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(values = pal) +
+  ylab("Escapement (num. fish)") +
+  ggtitle("Kodiak Salmon Escapement") +
+  my_theme
+```
+
+Using facet wrap
+
+```{r}
+ggplot(esc_sub, mapping = aes(x = Year, y = total, color = Species)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~SASAP.Region, scales = "free", ncol = 2) +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(values = pal) +
+  ylab("Escapement (num. fish)") +
+  ggtitle("Kodiak Salmon Escapement by Region") +
+  my_theme
+
+ggsave('figure.png', height = 7, width = 7, units = "in", dpi = 300)
+```
+
+# Create interactive table
+
+```{r}
+df_loc <- esc %>%
+  distinct(Location, Latitude, Longitude) %>%
+  drop_na()
+
+datatable(df_loc)
+```
+
+# Create interactive map
+
+```{r}
+leaflet(df_loc) %>%
+  addTiles() %>%
+  addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~Location)
+```
+
+Adding special tiles from WMS (web map server)
+
+```{r}
+leaflet(df_loc) %>% 
+  addWMSTiles("https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?",
+              layers = 'GEBCO_LATEST',
+              attribution = "Imagery reproduced from the GEBCO_2014 Grid, version 20150318, www.gebco.net") %>%
+  addCircleMarkers(lng = ~Longitude,
+                   lat = ~Latitude,
+                   popup = ~ Location,
+                   radius = 5,
+                   # set fill properties
+                   fillColor = "salmon",
+                   fillOpacity = 1,
+                   # set stroke properties
+                   stroke = T,
+                   weight = 0.5,
+                   color = "white",
+                   opacity = 1)
+```

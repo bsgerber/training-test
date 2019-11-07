@@ -18,5 +18,6 @@ knitr::opts_chunk$set(echo = TRUE)
 - Linear Models
 - Animal Movement Models Based on Telemetry
 - [Data Visualization](data_visualization.html)
+- [Shiny App](https://gerber.shinyapps.io/bgchem/)
 
 ### Bibliography

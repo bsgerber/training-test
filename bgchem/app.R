@@ -22,13 +22,15 @@ ui <- fluidPage(
                         min = 1,
                         max = 500,
                         value = c(1, 100)
-                        )
+                        ),
+            selectInput("myvar",
+                        "Variable:",
+                        choices = names(bg_chem))
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("myPlot1"),
-           plotOutput("myPlot2")
+           plotOutput("myPlot")
         )
     )
 )
@@ -36,22 +38,12 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-    output$myPlot1 <- renderPlot({
+    output$myPlot <- renderPlot({
         # generate plot
-        ggplot(bg_chem, mapping = aes(x = CTD_Depth, y = CTD_Salinity)) +
+        ggplot(bg_chem, mapping = aes_string(x = "CTD_Depth", y = input$myvar)) +
             geom_point(color = "green", size = 4) +
             xlim(c(input$depth[1], input$depth[2])) +
             ylab("Salinity") +
-            xlab("Depth") +
-            theme_light()
-    })
-    
-    output$myPlot2 <- renderPlot({
-        # generate plot
-        ggplot(bg_chem, mapping = aes(x = CTD_Depth, y = CTD_Temperature)) +
-            geom_point(color = "blue", size = 4) +
-            xlim(c(input$depth[1], input$depth[2])) +
-            ylab("Temperature") +
             xlab("Depth") +
             theme_light()
     })

@@ -15,8 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 - [Data Cleaning](data-cleaning.html)
 - Data Interpolation and Gap filling
-- Linear models
-- Animal movement models based on telemetry
-- Data visualization
+- Linear Models
+- Animal Movement Models Based on Telemetry
+- [Data Visualization](data_visualization.html)
 
 ### Bibliography

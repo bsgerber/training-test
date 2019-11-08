@@ -19,5 +19,6 @@ knitr::opts_chunk$set(echo = TRUE)
 - Animal Movement Models Based on Telemetry
 - [Data Visualization](data_visualization.html)
 - [Shiny App](https://gerber.shinyapps.io/bgchem/)
+- [Spatial Analysis](spacial_analysis.html)
 
 ### Bibliography

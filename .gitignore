@@ -27,3 +27,4 @@ data/
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 figure.png
+.DS_Store

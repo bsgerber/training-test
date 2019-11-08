@@ -8,6 +8,9 @@ data_url <- "https://arcticdata.io/metacat/d1/mn/v2/object/urn%3Auuid%3A35ad7624
 bg_chem <- read.csv(data_url, stringsAsFactors = FALSE)
 str(bg_chem)
 
+mychoices <- c("Salinity" = "CTD_Salinity",
+               "Temperature" = "CTD_Temperature")
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -25,9 +28,7 @@ ui <- fluidPage(
                         ),
             selectInput("myvar",
                         "Variable:",
-                        choices = c("Depth" = "CTD_Depth",
-                                    "Salinity" = "CTD_Salinity",
-                                    "Temperature" = "CTD_Temperature"))
+                        choices = mychoices)
         ),
 
         # Show a plot of the generated distribution
@@ -45,7 +46,7 @@ server <- function(input, output) {
         ggplot(bg_chem, mapping = aes_string(x = "CTD_Depth", y = input$myvar)) +
             geom_point(color = "green", size = 4) +
             xlim(c(input$depth[1], input$depth[2])) +
-            ylab("Salinity") +
+            ylab(names(mychoices)[mychoices == input$myvar]) +
             xlab("Depth") +
             theme_light()
     })
